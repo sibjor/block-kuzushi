@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(BlockKuzushi C)
+project(BlockKuzushi)
 
 # Set C standard to C99
 set(CMAKE_C_STANDARD 99)
@@ -20,7 +20,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(raylib)
 
 # Add the executable
-add_executable(${PROJECT_NAME} main.c)
+add_executable(${PROJECT_NAME} main.c game.c shapes.c player.c functions.c )
 
 # Link raylib and platform-specific libraries
 if (WIN32)

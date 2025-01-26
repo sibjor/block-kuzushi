@@ -1,0 +1,1 @@
+void InitGame(int width, int height, const char *title);
