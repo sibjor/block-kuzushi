@@ -8,7 +8,11 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "C:/Users/sixte/Documents/GitHub/block-kuzushi/main.c" "CMakeFiles/BlockKuzushi.dir/main.c.obj" "gcc" "CMakeFiles/BlockKuzushi.dir/main.c.obj.d"
+  "/home/sibjor/block-kuzushi/functions.c" "CMakeFiles/BlockKuzushi.dir/functions.c.o" "gcc" "CMakeFiles/BlockKuzushi.dir/functions.c.o.d"
+  "/home/sibjor/block-kuzushi/game.c" "CMakeFiles/BlockKuzushi.dir/game.c.o" "gcc" "CMakeFiles/BlockKuzushi.dir/game.c.o.d"
+  "/home/sibjor/block-kuzushi/main.c" "CMakeFiles/BlockKuzushi.dir/main.c.o" "gcc" "CMakeFiles/BlockKuzushi.dir/main.c.o.d"
+  "/home/sibjor/block-kuzushi/player.c" "CMakeFiles/BlockKuzushi.dir/player.c.o" "gcc" "CMakeFiles/BlockKuzushi.dir/player.c.o.d"
+  "/home/sibjor/block-kuzushi/shapes.c" "CMakeFiles/BlockKuzushi.dir/shapes.c.o" "gcc" "CMakeFiles/BlockKuzushi.dir/shapes.c.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

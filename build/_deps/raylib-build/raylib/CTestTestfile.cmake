@@ -1,6 +1,6 @@
 # CMake generated Testfile for 
-# Source directory: C:/Users/sixte/Documents/GitHub/block-kuzushi/build/_deps/raylib-src/src
-# Build directory: C:/Users/sixte/Documents/GitHub/block-kuzushi/build/_deps/raylib-build/raylib
+# Source directory: /home/sibjor/block-kuzushi/build/_deps/raylib-src/src
+# Build directory: /home/sibjor/block-kuzushi/build/_deps/raylib-build/raylib
 # 
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.
