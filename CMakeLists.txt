@@ -20,7 +20,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(raylib)
 
 # Add the executable
-add_executable(${PROJECT_NAME} main.c game.c shapes.c player.c functions.c )
+add_executable(${PROJECT_NAME} main.c)
 
 # Link raylib and platform-specific libraries
 if (WIN32)
