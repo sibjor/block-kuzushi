@@ -15,13 +15,21 @@ typedef struct Ball{
   float speedY;
 }Ball;
 
-void BallBounce(Ball *ball){
-  if(ball->posX <= 0 || ball->posX>= 800){
-    ball->speedX *= -1;
-  }
-  if(ball->posY<= 0 || ball->posY >= 800){
-    ball->speedY *= -1;
-  }
+void BallBounce(Ball *ball, Player *player) {
+    if (ball->posX <= 0 || ball->posX >= 800) {
+        ball->speedX *= -1;
+    }
+    if (ball->posY <= 0 || ball->posY >= 800) {
+        ball->speedY *= -1;
+    }
+
+    Rectangle playerRect = { player->posX, player->posY, player->width, player->height };
+    Vector2 ballCenter = { ball->posX, ball->posY };
+
+    if (CheckCollisionCircleRec(ballCenter, ball->radius, playerRect)) {
+        ball->speedY *= -1;
+        ball->speedX *= -1;
+    }
 }
 
 int main() {
@@ -29,7 +37,7 @@ int main() {
     SetTargetFPS(60);
 
     Player player = { 400, 750, 100, 20};
-    Ball ball = {400, 400, 16.0f, 5.0f, 5.0f};
+    Ball ball = {160, 400, 16.0f, 5.0f, 5.0f};
 
     while (!WindowShouldClose()) {
         // Update player position
@@ -38,7 +46,7 @@ int main() {
         // Update ball position
         ball.posX += ball.speedX;
         ball.posY += ball.speedY;
-        BallBounce(&ball);
+        BallBounce(&ball, &player);
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
