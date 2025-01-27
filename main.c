@@ -56,7 +56,7 @@ void SpawnBricksAndBlocks() {
     int index = 0;
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
-            blocks[index] = (Block){ i * 80, j * 40, 80, 40, true };
+            blocks[index] = (Block){ i * 80, j * 40, 70, 38, true };
             index++;
         }
     }
