@@ -22,6 +22,7 @@ typedef struct Block {
     int width;
     int height;
     bool active;
+    Color color;
 } Block;
 
 Block blocks[MAX_BLOCKS];
@@ -39,6 +40,7 @@ void BallBounce(Ball *ball, Player *player) {
 
     if (CheckCollisionCircleRec(ballCenter, ball->radius, playerRect)) {
         ball->speed.y *= -1;
+        ball->speed.x *= -1;
     }
 
     for (int i = 0; i < MAX_BLOCKS; i++) {
@@ -54,9 +56,11 @@ void BallBounce(Ball *ball, Player *player) {
 
 void SpawnBricksAndBlocks() {
     int index = 0;
+    Color colors[] = { RED, GREEN, BLUE, YELLOW, PURPLE, ORANGE , BLACK};
+    int colorCount = sizeof(colors) / sizeof(colors[0]);
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
-            blocks[index] = (Block){ i * 80, j * 40, 70, 38, true };
+            blocks[index] = (Block){ i * 80, j * 40, 70, 38, true, colors[index % colorCount] };
             index++;
         }
     }
@@ -86,9 +90,10 @@ int main() {
         DrawRectangle(player.posX, player.posY, player.width, player.height, BLACK);
         DrawCircleV(ball.position, ball.radius, BLACK);
 
+        // Draw blocks
         for (int i = 0; i < MAX_BLOCKS; i++) {
             if (blocks[i].active) {
-                DrawRectangle(blocks[i].posX, blocks[i].posY, blocks[i].width, blocks[i].height, YELLOW);
+                DrawRectangle(blocks[i].posX, blocks[i].posY, blocks[i].width, blocks[i].height, blocks[i].color);
             }
         }
 
