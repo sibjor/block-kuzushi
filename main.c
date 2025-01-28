@@ -2,6 +2,10 @@
 #include "raymath.h"
 
 #define MAX_BLOCKS 100
+#define GAME_OVER_TEXT "Game Over! Press R to Restart"
+#define GAME_OVER_TEXT_X 200
+#define GAME_OVER_TEXT_Y 400
+#define GAME_OVER_TEXT_SIZE 20
 
 typedef struct Player {
     int posX;
@@ -27,12 +31,19 @@ typedef struct Block {
 
 Block blocks[MAX_BLOCKS];
 
+int lives = 3;
+
 void BallBounce(Ball *ball, Player *player) {
     if (ball->position.x <= 0 || ball->position.x >= 800) {
         ball->speed.x *= -1;
     }
-    if (ball->position.y <= 0 || ball->position.y >= 800) {
+    if (ball->position.y <= 0) {
         ball->speed.y *= -1;
+    }
+    if (ball->position.y >= 800) {
+        lives--;
+        ball->position = (Vector2){ 400, 400 };
+        ball->speed = (Vector2){ 5.0f, 5.0f };
     }
 
     Rectangle playerRect = { player->posX, player->posY, player->width, player->height };
@@ -40,15 +51,29 @@ void BallBounce(Ball *ball, Player *player) {
 
     if (CheckCollisionCircleRec(ballCenter, ball->radius, playerRect)) {
         ball->speed.y *= -1;
-        ball->speed.x *= -1;
+        float relativeIntersectX = (ballCenter.x - (player->posX + player->width / 2)) / (player->width / 2); // equivalent to (*player).width...
+        ball->speed.x = relativeIntersectX * 5.0f; // This part is a bit tricky, it changes the ball's direction based on where it hits the player
     }
 
     for (int i = 0; i < MAX_BLOCKS; i++) {
         if (blocks[i].active) {
             Rectangle blockRect = { blocks[i].posX, blocks[i].posY, blocks[i].width, blocks[i].height };
             if (CheckCollisionCircleRec(ballCenter, ball->radius, blockRect)) {
-                ball->speed.y *= -1;
-                blocks[i].active = false;
+                if (blocks[i].color.r == RED.r && blocks[i].color.g == RED.g && blocks[i].color.b == RED.b && blocks[i].color.a == RED.a) {
+                    lives++; // Add lives to player hitting a red block
+                    blocks[i].active = false;
+                } else if (blocks[i].color.r == BLACK.r && blocks[i].color.g == BLACK.g && blocks[i].color.b == BLACK.b && blocks[i].color.a == BLACK.a) {
+                    ball->speed.y *= -1; // Hitting a brick with (black) colour
+                } else {
+                    blocks[i].active = false;
+                    float overlapX = ballCenter.x - (blocks[i].posX + blocks[i].width / 2);
+                    float overlapY = ballCenter.y - (blocks[i].posY + blocks[i].height / 2);
+                    if (fabs(overlapX) > fabs(overlapY)) {
+                        ball->speed.x *= -1;
+                    } else {
+                        ball->speed.y *= -1;
+                    }
+                }
             }
         }
     }
@@ -56,7 +81,7 @@ void BallBounce(Ball *ball, Player *player) {
 
 void SpawnBricksAndBlocks() {
     int index = 0;
-    Color colors[] = { RED, GREEN, BLUE, YELLOW, PURPLE, ORANGE , BLACK};
+    Color colors[] = { RED, GREEN, BLUE, YELLOW, PURPLE, ORANGE, BLACK };
     int colorCount = sizeof(colors) / sizeof(colors[0]);
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
@@ -66,35 +91,50 @@ void SpawnBricksAndBlocks() {
     }
 }
 
+void GameOver(int *lives, Vector2 *ballPosition, Vector2 *ballSpeed) {
+    DrawText(GAME_OVER_TEXT, GAME_OVER_TEXT_X, GAME_OVER_TEXT_Y, GAME_OVER_TEXT_SIZE, RED);
+    if (IsKeyPressed(KEY_R)) {
+        *lives = 3;
+        *ballPosition = (Vector2){ 400, 400 };
+        *ballSpeed = (Vector2){ 5.0f, 5.0f };
+        SpawnBricksAndBlocks();
+    }
+}
+
 int main() {
     InitWindow(800, 800, "Block-Kuzushi");
     SetTargetFPS(60);
 
     Player player = { 400, 750, 100, 20 };
-    Ball ball = { { 160, 400 }, 16.0f, { 5.0f, 5.0f } };
+    Ball ball = { { 400, 400 }, 16.0f, { 5.0f, 5.0f } };
 
     SpawnBricksAndBlocks();
 
     while (!WindowShouldClose()) {
-        // Update player position
-        if (IsKeyDown(KEY_RIGHT)) player.posX += 5.0f;
-        if (IsKeyDown(KEY_LEFT)) player.posX -= 5.0f;
+        if (IsKeyDown(KEY_RIGHT) && player.posX + player.width < 800) player.posX += 5.0f;
+        if (IsKeyDown(KEY_LEFT) && player.posX > 0) player.posX -= 5.0f;
 
-        // Update ball position
-        ball.position = Vector2Add(ball.position, ball.speed);
-
-        BallBounce(&ball, &player);
+        if (lives > 0) {
+            ball.position = Vector2Add(ball.position, ball.speed);
+            BallBounce(&ball, &player);
+        }
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
+
         DrawRectangle(player.posX, player.posY, player.width, player.height, BLACK);
         DrawCircleV(ball.position, ball.radius, BLACK);
 
-        // Draw blocks
         for (int i = 0; i < MAX_BLOCKS; i++) {
             if (blocks[i].active) {
                 DrawRectangle(blocks[i].posX, blocks[i].posY, blocks[i].width, blocks[i].height, blocks[i].color);
             }
+        }
+
+        DrawText(TextFormat("Lives: %d", lives), 10, 10, 20, DARKGRAY); // Another variation
+
+        if (lives <= 0) {
+            GameOver(&lives, &ball.position, &ball.speed);
         }
 
         EndDrawing();
